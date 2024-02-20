@@ -1,7 +1,7 @@
 version: "3.8"
 services:
   client:
-    container_name: react1
+    container_name: client
     build:
       context: ./client
       dockerfile: Dockerfile.dev
@@ -9,18 +9,18 @@ services:
       - 3000:3000
     volumes:
       - type: bind
-        source: .
+        source: ./client
         target: /app
 
   client-test:
-    container_name: test1
+    container_name: client-test
     command: ["npm", "run", "test"]
     build:
       context: ./client
       dockerfile: Dockerfile.dev
     volumes:
       - type: bind
-        source: .
+        source: ./client
         target: /app
     stdin_open: true
     tty: true
