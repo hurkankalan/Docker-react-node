@@ -1,71 +1,31 @@
-# Getting Started with Create React App
+# Docker-react-node
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+## `Lancement de l'application`
 
-## Available Scripts
+**`Docker compose up`**
 
-In the project directory, you can run:
+***Ouvrez [http://localhost:3000](http://localhost:3000) pour acceder à l'application React.***
 
-### `npm start`
+## `Environnement de développement`
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+Voici un petit récapitulatif de l'architecture en développement (dev):
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+- **Application client :** c'est l'application SPA servie aux utilisateurs.
+J'ai utilisé React car je suis spécialisé sur celui-ci, mais cela fonctionnerait exactement pareil pour Angular et Vue.
+L'application client utilise Webpack dev server en développement : il s'agit d'un serveur Node.js qui permet de détecter les changements dans le code source, de recompiler le code et de rafraichir la page du navigateur (cela permet d'obtenir et d'utiliser le live-reload).
 
-### `npm test`
+- **Reverse-proxy :** il s'agit du point d'entrée de l'application qui va se charger ici uniquement de répartir les requêtes entrantes entre mes différents services.
+Pour ce fait, j'ai utilisé nginx avec une configuration très basique.
+Il va rediriger :
+  - les requêtes commençant par /api vers mon API qui sera un serveur Node.js
+  - les requêtes commençant par /sockjs-node vers le serveur de développement Webpack (la petite difficulté etait de gérer les Websockets qui sont nécessaires pour Webpack dev server afin d'avertir le navigateur qu'il doit recharger la page après une recompilation)
+  - les autres requêtes vers Webpack dev server qui sert mon application React en développement.
+- **Base de données :** c'est une base de données NoSQL MongoDB auquelle mon serveur Node.js se connectera.
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+## `Environnement de production`
 
-### `npm run build`
-
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
-
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
-
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
-
-### `npm run eject`
-
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
-
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
-
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
-
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
-
-## Learn More
-
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
-
-### Code Splitting
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
-
-### Analyzing the Bundle Size
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
-
-### Making a Progressive Web App
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
-
-### Advanced Configuration
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
-
-### Deployment
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `npm run build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
-# docker-react-node
+- **Reverse-proxy :** comme pour l'environnement dev, il s'agit du point d'entrée de l'application qui va se charger ici uniquement de répartir les requêtes entrantes entre mes services.
+Il va rediriger :
+  - les requêtes commençant par /api vers mon API qui sera un serveur Node.js.
+  - les autres requêtes vers un autre service nginx qui va uniquement servir le build de mon application React de manière optimisée.
+- **Base de données :** idem que l'environnement de dev

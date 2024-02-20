@@ -1,9 +1,9 @@
 version: "3.8"
 services:
-  build:
+  client:
     container_name: build1
     build:
-      context: .
+      context: ./client
       dockerfile: Dockerfile.prod
     ports:
       - 80:80

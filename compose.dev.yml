@@ -3,7 +3,7 @@ services:
   client:
     container_name: react1
     build:
-      context: .
+      context: ./client
       dockerfile: Dockerfile.dev
     ports:
       - 3000:3000
@@ -12,11 +12,11 @@ services:
         source: .
         target: /app
 
-  test:
+  client-test:
     container_name: test1
     command: ["npm", "run", "test"]
     build:
-      context: .
+      context: ./client
       dockerfile: Dockerfile.dev
     volumes:
       - type: bind
